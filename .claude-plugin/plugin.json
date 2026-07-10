@@ -1,6 +1,9 @@
 {
   "name": "cachelayer",
-  "description": "CacheLayer step caching for Claude Code. Looks up and saves agent steps over MCP; PreToolUse hook checks the cache before tools run.",
+  "description": "CacheLayer step caching for Claude Code. MCP tools plus PreToolUse cache lookup.",
   "version": "1.0.0",
-  "author": { "name": "CacheLayer" }
+  "author": { "name": "CacheLayer" },
+  "homepage": "https://cachelayer.org/",
+  "repository": "https://github.com/befugngr/cachelayer-claude-code-plugin",
+  "license": "Apache-2.0"
 }
