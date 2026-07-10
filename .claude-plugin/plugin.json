@@ -1,0 +1,6 @@
+{
+  "name": "cachelayer",
+  "description": "CacheLayer step caching for Claude Code. Looks up and saves agent steps over MCP; PreToolUse hook checks the cache before tools run.",
+  "version": "1.0.0",
+  "author": { "name": "CacheLayer" }
+}
