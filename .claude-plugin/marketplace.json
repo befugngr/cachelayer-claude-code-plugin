@@ -1,0 +1,21 @@
+{
+  "name": "cachelayer-claude-code-plugin",
+  "owner": {
+    "name": "CacheLayer",
+    "url": "https://cachelayer.org/"
+  },
+  "metadata": {
+    "description": "CacheLayer plugins for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "cachelayer",
+      "source": "./",
+      "description": "CacheLayer step caching for Claude Code. MCP tools plus PreToolUse cache lookup.",
+      "version": "1.0.0",
+      "homepage": "https://cachelayer.org/",
+      "repository": "https://github.com/befugngr/cachelayer-claude-code-plugin",
+      "license": "Apache-2.0"
+    }
+  ]
+}
