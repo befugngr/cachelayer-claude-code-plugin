@@ -6,8 +6,9 @@
 set -u
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 URL="${CACHELAYER_HOOK_URL:-https://api.cachelayer.org/hooks/pre-tool-use}"
-TOKEN="${CACHELAYER_CONNECT_TOKEN:-}"
-TIMEOUT="${CACHELAYER_HOOK_TIMEOUT_S:-2}"
+# Canonical: CACHELAYER_KEY (legacy CONNECT_TOKEN / TOKEN still accepted)
+TOKEN="${CACHELAYER_KEY:-${CACHELAYER_CONNECT_TOKEN:-${CACHELAYER_TOKEN:-}}}"
+TIMEOUT="${CACHELAYER_HOOK_TIMEOUT_S:-5}"
 
 INPUT="$(cat || true)"
 AUTH_ARGS=()
@@ -29,8 +30,27 @@ fi
 # Echo CacheLayer JSON so Claude can see hit/result context on stdout.
 printf '%s\n' "$RESP"
 
-# If permissionDecision is deny, block with exit 2.
-if printf '%s' "$RESP" | grep -q '"permissionDecision"[[:space:]]*:[[:space:]]*"deny"'; then
+# Parse JSON properly (grep breaks on whitespace/key order).
+DECISION="allow"
+if command -v python3 >/dev/null 2>&1; then
+  DECISION="$(printf '%s' "$RESP" | python3 -c '
+import sys, json
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    print("allow")
+    raise SystemExit(0)
+if not isinstance(d, dict):
+    print("allow")
+    raise SystemExit(0)
+hso = d.get("hookSpecificOutput") if isinstance(d.get("hookSpecificOutput"), dict) else {}
+print(hso.get("permissionDecision") or d.get("permissionDecision") or "allow")
+' 2>/dev/null || echo allow)"
+elif command -v jq >/dev/null 2>&1; then
+  DECISION="$(printf '%s' "$RESP" | jq -r '.hookSpecificOutput.permissionDecision // .permissionDecision // "allow"' 2>/dev/null || echo allow)"
+fi
+
+if [ "$DECISION" = "deny" ]; then
   exit 2
 fi
 exit 0

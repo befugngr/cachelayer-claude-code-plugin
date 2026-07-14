@@ -1,0 +1,38 @@
+name: lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON manifests
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          paths = [
+            ".claude-plugin/plugin.json",
+            ".claude-plugin/marketplace.json",
+            ".mcp.json",
+            "hooks/hooks.json",
+          ]
+          required = {"name", "description", "version", "author", "homepage", "repository", "license", "keywords"}
+          for p in paths:
+              with open(p) as f:
+                  data = json.load(f)
+              print(f"OK json {p}")
+          with open(".claude-plugin/plugin.json") as f:
+              plug = json.load(f)
+          missing = required - set(plug)
+          if missing:
+              print("Missing plugin.json fields:", sorted(missing), file=sys.stderr)
+              sys.exit(1)
+          print("OK plugin.json required fields")
+          PY
+      - name: Bash syntax check
+        run: bash -n scripts/pre_tool_use.sh
+      - name: Markdown presence
+        run: test -f README.md && test -f skills/cachelayer-tools/SKILL.md
