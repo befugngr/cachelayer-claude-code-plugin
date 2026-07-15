@@ -1,10 +1,23 @@
 # CacheLayer for Claude Code
 
-Claude Code plugin: MCP step cache plus a PreToolUse **command** hook that checks CacheLayer before tools run.
+MCP step cache plus a PreToolUse hook so Claude Code can reuse prior safe agent steps.
 
 Site: https://cachelayer.org/
 
-## Install
+## Prerequisites
+
+- [Claude Code](https://code.claude.com/)
+- A **CacheLayer account** and connect token (`clct_…`) — required; MCP returns **401** without it
+
+## 1. Get a connect token
+
+1. Sign up or sign in at https://cachelayer.org/
+2. Create a connect token from your account (API: `POST /user/connect-token` while logged in)
+3. Copy the full value once — it looks like `clct_<your-token>`
+
+You will set this as `CACHELAYER_KEY` in the next steps.
+
+## 2. Install
 
 In Claude Code:
 
@@ -16,44 +29,61 @@ In Claude Code:
 
 (`/reload-plugins` reloads plugins in-session; you can also restart Claude Code.)
 
-(`cachelayer` alone may work after the marketplace is added; the `name@marketplace` form matches Claude Code’s documented install style.)
-
-Or test locally without a marketplace:
+Local test without a marketplace:
 
 ```bash
 claude --plugin-dir ./cachelayer-claude-code-plugin
 ```
 
-Confirm MCP and the PreToolUse hook are loaded.
+## 3. Auth (required)
 
-### Auth (required)
+Export your connect token in the environment that launches Claude Code:
 
-Set `CACHELAYER_KEY` to your `clct_<your-token>` connect token. The bundled `.mcp.json` sends it as `Authorization: Bearer …`, and `scripts/pre_tool_use.sh` sends the same header to the hook. Unauthenticated MCP/hook requests return **401**.
-
-MCP URL: `https://api.cachelayer.org/mcp` (streamable HTTP; preferred over legacy `/mcp/sse`)
-
-## Layout
-
-```text
-.claude-plugin/plugin.json      — manifest
-.claude-plugin/marketplace.json — marketplace entry
-.mcp.json                       — CacheLayer MCP server config
-hooks/hooks.json                — PreToolUse hook definition
-scripts/pre_tool_use.sh         — cache lookup hook handler
-skills/cachelayer-tools/SKILL.md — agent skill
-LICENSE                         — Apache 2.0
-README.md                       — this file
+```bash
+export CACHELAYER_KEY='clct_<your-token>'
 ```
+
+The bundled `.mcp.json` and `scripts/pre_tool_use.sh` both send:
+
+`Authorization: Bearer <CACHELAYER_KEY>`
+
+- MCP URL: `https://api.cachelayer.org/mcp` (streamable HTTP)
+- Hook URL: `https://api.cachelayer.org/hooks/pre-tool-use` (fail-open, 5s timeout)
+
+Missing or invalid token → MCP **401**. Hook fail-opens (tool still runs; no cache).
+
+## 4. Verify
+
+- MCP server `cachelayer` is connected
+- Tools available: `lookup_step`, `save_step`, `check_conflict`, `run_status`
+- Skill `cachelayer-tools` is loaded
+- A test `lookup_step` does not return unauthorized / 401
 
 ## Tools
 
 - `lookup_step` / `save_step` / `check_conflict` / `run_status`
-- PreToolUse hook: `type: "command"` → `scripts/pre_tool_use.sh` → `POST https://api.cachelayer.org/hooks/pre-tool-use` (fail-open, 5s timeout). Not a native `type: "http"` hook.
+- PreToolUse hook: command script → CacheLayer hook API (not a native HTTP hook type)
+
+One UUID `run_id` per task. Keep descriptors short and consistent (e.g. `read file src/auth.js`).
+
+## Layout
+
+```text
+.claude-plugin/plugin.json       — manifest
+.claude-plugin/marketplace.json  — marketplace entry
+.mcp.json                        — MCP server config
+hooks/hooks.json                 — PreToolUse definition
+scripts/pre_tool_use.sh          — hook handler
+skills/cachelayer-tools/SKILL.md — agent skill
+LICENSE
+README.md
+```
 
 ## Limits
 
-- Hook fail-open: if CacheLayer is down, slow, or returns non-2xx (including 401 without a token), the tool proceeds
-- Keep descriptions short so lookups match saves
+- Hook fail-open on downtime / timeout / non-2xx (including 401)
+- Write/mutating steps are not replayed from cache
+- Do not save secrets from env files
 
 ## Compliance
 
