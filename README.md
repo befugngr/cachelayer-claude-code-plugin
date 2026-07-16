@@ -58,7 +58,7 @@ The MCP server and PreToolUse hook use the same `CACHELAYER_KEY`.
 
 ```text
 .claude-plugin/plugin.json
-marketplace.json
+.claude-plugin/marketplace.json
 hooks/hooks.json
 scripts/pre_tool_use.sh
 skills/cachelayer-tools/SKILL.md

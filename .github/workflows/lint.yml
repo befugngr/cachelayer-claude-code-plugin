@@ -15,7 +15,7 @@ jobs:
           import json, sys
           paths = [
             ".claude-plugin/plugin.json",
-            "marketplace.json",
+            ".claude-plugin/marketplace.json",
             ".mcp.json",
             "hooks/hooks.json",
           ]
