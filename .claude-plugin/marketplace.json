@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "cachelayer",
-      "source": "./",
+      "source": ".",
       "description": "CacheLayer step caching for Claude Code. MCP tools plus PreToolUse cache lookup.",
       "version": "1.0.0",
       "homepage": "https://cachelayer.org/",
