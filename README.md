@@ -2,9 +2,12 @@
 
 Cache completed agent steps and reuse them in future tasks.
 
-## Requirements
+## Prerequisites
 
 - Claude Code
+- Git for Windows (required for marketplace installation)
+  - Install: `winget install --id Git.Git -e`
+  - Or download from https://git-scm.com/
 - A CacheLayer connect token (`clct_...`) from https://cachelayer.org/
 
 ## Install
@@ -66,6 +69,28 @@ skills/cachelayer-tools/SKILL.md
 LICENSE
 README.md
 ```
+
+## Troubleshooting
+
+If marketplace installation fails with `git not found`:
+
+1. Install Git from https://git-scm.com/.
+2. Restart your terminal and Claude Code.
+3. Try the full repository URL:
+
+   ```text
+   /plugin marketplace add https://github.com/befugngr/cachelayer-claude-code-plugin.git
+   ```
+
+4. Or clone the repository and add it locally:
+
+   ```bash
+   git clone https://github.com/befugngr/cachelayer-claude-code-plugin.git
+   ```
+
+   ```text
+   /plugin marketplace add ./cachelayer-claude-code-plugin
+   ```
 
 ## Security
 
