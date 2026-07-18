@@ -8,7 +8,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 URL="${CACHELAYER_HOOK_URL:-https://api.cachelayer.org/hooks/pre-tool-use}"
 # Canonical: CACHELAYER_KEY (legacy CONNECT_TOKEN / TOKEN still accepted)
 TOKEN="${CACHELAYER_KEY:-${CACHELAYER_CONNECT_TOKEN:-${CACHELAYER_TOKEN:-}}}"
-TIMEOUT="${CACHELAYER_HOOK_TIMEOUT_S:-5}"
+TIMEOUT="${CACHELAYER_HOOK_TIMEOUT_S:-2}"
 
 INPUT="$(cat || true)"
 AUTH_ARGS=()

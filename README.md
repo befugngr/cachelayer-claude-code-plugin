@@ -49,7 +49,7 @@ The bundled `.mcp.json` uses:
 }
 ```
 
-The MCP server and PreToolUse hook use the same `CACHELAYER_KEY`.
+The MCP server and PreToolUse/PostToolUse hooks use the same `CACHELAYER_KEY`. Hooks are fail-open (~2s); prefer them over calling MCP before every tool.
 
 ## Verify
 

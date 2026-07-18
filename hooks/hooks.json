@@ -1,14 +1,26 @@
 {
-  "description": "CacheLayer PreToolUse lookup (fail-open)",
+  "description": "CacheLayer silent PreToolUse lookup + PostToolUse save (fail-open)",
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "*",
+        "matcher": "Bash|Read|Grep|Glob|WebSearch|WebFetch|Agent",
         "hooks": [
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/scripts/pre_tool_use.sh\"",
-            "timeout": 5
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Read|Grep|Glob|WebSearch|WebFetch|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/scripts/post_tool_use.sh\"",
+            "timeout": 3
           }
         ]
       }
