@@ -23,6 +23,16 @@
             "timeout": 3
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/agent/run_critic.sh\"",
+            "timeout": 15
+          }
+        ]
       }
     ]
   }

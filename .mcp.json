@@ -6,6 +6,13 @@
       "headers": {
         "Authorization": "Bearer ${CACHELAYER_KEY}"
       }
+    },
+    "cachelayer-agent": {
+      "type": "stdio",
+      "command": "bash",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/agent/run.sh"
+      ]
     }
   }
 }

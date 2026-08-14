@@ -1,32 +1,27 @@
 ---
 name: cachelayer-tools
 description: >-
-  Optional CacheLayer MCP tools. Prefer silent PreToolUse/PostToolUse hooks.
-  Use MCP for run_status, check_conflict, or explicit expensive reuse.
+  Optional CacheLayer cache and local CRITIC/TIA/Debug tools. Prefer silent
+  PreToolUse/PostToolUse cache hooks; use local loop-cutters once.
 ---
 
 # CacheLayer tools
 
-Set `CACHELAYER_KEY` to your `clct_<token>`. **Hooks** handle lookup/save silently — do not call MCP before every tool.
+Set `CACHELAYER_KEY` to your `clct_<token>`. Hooks handle ordinary remote cache lookup/save silently; do not call MCP before every tool.
 
-## Prefer hooks
+## Local loop-cutters
 
-- PreToolUse → `/hooks/pre-tool-use` (lookup)
-- PostToolUse → `/hooks/post-tool-use` (save)
-- Fail-open, ~2s timeout
+- Call `verify_edit` **once after a coherent code edit** with edited paths. It gates typecheck, lint, then affected tests. Skip docs-only changes.
+- Call `run_affected_tests` **once after edits** when targeted test evidence is needed and `verify_edit` did not already run tests.
+- Call `debug_failure` **once only after a failure**, with the traceback or failing test output. Never call it on a passing run.
+- Optional analyzers degrade to bounded stdlib or project-tool fallbacks and return install guidance instead of crashing.
 
-## When to call MCP
+## Remote cache MCP
 
-- `run_status` after interruption
-- `check_conflict` before risky writes
-- `lookup_step` / `save_step` only for explicit expensive reuse
-
-## Descriptor style (MCP)
-
-`read file <path>` · `run command <cmd>` · `search <query>` — same string on lookup and save. One `run_id` per task.
+Use `run_status` after interruption, `check_conflict` before risky writes, and `lookup_step` / `save_step` only for explicit expensive reuse. Use stable lowercase descriptors and one `run_id` per task.
 
 ## Do not
 
 - MCP before every Bash/Read/Grep
 - Save secrets
-- Call CacheLayer tools before other CacheLayer tools
+- Nest CacheLayer tool calls

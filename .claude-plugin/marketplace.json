@@ -12,7 +12,7 @@
       "name": "cachelayer",
       "source": "./",
       "description": "CacheLayer managed keys for Claude Code. Connect token (CACHELAYER_KEY) enables step caching via hooks and MCP.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "homepage": "https://cachelayer.org/",
       "repository": "https://github.com/befugngr/cachelayer-claude-code-plugin",
       "license": "Apache-2.0"
