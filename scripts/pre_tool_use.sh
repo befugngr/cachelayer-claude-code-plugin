@@ -10,16 +10,19 @@ URL="${CACHELAYER_HOOK_URL:-https://api.cachelayer.org/hooks/pre-tool-use}"
 TOKEN="${CACHELAYER_KEY:-${CACHELAYER_CONNECT_TOKEN:-${CACHELAYER_TOKEN:-}}}"
 TIMEOUT="${CACHELAYER_HOOK_TIMEOUT_S:-2}"
 
-INPUT="$(cat || true)"
-AUTH_ARGS=()
-if [[ -n "$TOKEN" ]]; then
-  AUTH_ARGS=(-H "Authorization: Bearer ${TOKEN}")
+if [[ -z "$TOKEN" ]] || ! command -v python3 >/dev/null 2>&1; then
+  exit 0
+fi
+
+INPUT="$(python3 "$ROOT/scripts/filter_hook_payload.py" || true)"
+if [[ -z "$INPUT" ]]; then
+  exit 0
 fi
 
 RESP="$(curl -sS --max-time "$TIMEOUT" \
   -X POST "$URL" \
   -H "Content-Type: application/json" \
-  "${AUTH_ARGS[@]}" \
+  -H "Authorization: Bearer ${TOKEN}" \
   -d "$INPUT" 2>/dev/null || true)"
 
 if [[ -z "$RESP" ]]; then
@@ -44,7 +47,9 @@ if not isinstance(d, dict):
     print("allow")
     raise SystemExit(0)
 hso = d.get("hookSpecificOutput") if isinstance(d.get("hookSpecificOutput"), dict) else {}
-print(hso.get("permissionDecision") or d.get("permissionDecision") or "allow")
+cl = d.get("cachelayer") if isinstance(d.get("cachelayer"), dict) else {}
+decision = hso.get("permissionDecision") or d.get("permissionDecision") or "allow"
+print("deny" if decision == "deny" and cl.get("hit") and cl.get("replay_safe") is True else "allow")
 ' 2>/dev/null || echo allow)"
 elif command -v jq >/dev/null 2>&1; then
   DECISION="$(printf '%s' "$RESP" | jq -r '.hookSpecificOutput.permissionDecision // .permissionDecision // "allow"' 2>/dev/null || echo allow)"

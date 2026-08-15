@@ -11,8 +11,11 @@
       "type": "stdio",
       "command": "bash",
       "args": [
-        "${CLAUDE_PLUGIN_ROOT}/agent/run.sh"
-      ]
+        "${CLAUDE_PLUGIN_ROOT}/cachelayer_tools/run_mcp.sh"
+      ],
+      "env": {
+        "CACHELAYER_WORKSPACE_ROOT": "${CLAUDE_PROJECT_DIR}"
+      }
     }
   }
 }

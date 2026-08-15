@@ -3,7 +3,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash|Read|Grep|Glob|WebSearch|WebFetch|Agent",
+        "matcher": "Read|Grep|Glob|WebSearch|WebFetch|mcp__.+__(read|grep|glob|search|fetch).*",
         "hooks": [
           {
             "type": "command",
@@ -15,7 +15,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Bash|Read|Grep|Glob|WebSearch|WebFetch|Agent",
+        "matcher": "Read|Grep|Glob|WebSearch|WebFetch|mcp__.+__(read|grep|glob|search|fetch).*",
         "hooks": [
           {
             "type": "command",
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/agent/run_critic.sh\"",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/cachelayer_tools/run_verify_hook.sh\"",
             "timeout": 15
           }
         ]
