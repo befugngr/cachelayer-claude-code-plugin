@@ -53,3 +53,7 @@ launchctl setenv CACHELAYER_KEY 'cl_<your-token>'
 ```
 
 Fully quit and reopen Claude Code.
+
+## Compact + stable instructions
+
+This plugin ships `CLAUDE.md` (always loaded) and `PreCompact` / `PostCompact` hooks that call CacheLayer before/after compaction.
