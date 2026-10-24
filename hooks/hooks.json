@@ -1,18 +1,6 @@
 {
-  "description": "CacheLayer silent PreToolUse lookup + PostToolUse save (fail-open)",
+  "description": "CacheLayer saves read results after the tool finishes. Lookup is not on the typing path.",
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Read|Grep|Glob|WebSearch|WebFetch|mcp__.+__(read|grep|glob|search|fetch).*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/pre_tool_use.sh\"",
-            "timeout": 3
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Read|Grep|Glob|WebSearch|WebFetch|mcp__.+__(read|grep|glob|search|fetch).*",
@@ -20,17 +8,7 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/post_tool_use.sh\"",
-            "timeout": 3
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit|MultiEdit|NotebookEdit|apply_patch|create_file|edit_file|write_file|str_replace_editor|replace_string_in_file|insert_edit_into_file|multi_replace_string_in_file",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/cachelayer_tools/run_verify_hook.sh\"",
-            "timeout": 15
+            "timeout": 1
           }
         ]
       }
